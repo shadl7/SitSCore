@@ -25,6 +25,9 @@ repositories {
             includeGroup 'maven.modrinth'
         }
     }
+    maven {
+        url "https://maven.blamejared.com/"
+    }
     mavenLocal() // Must be last for caching to work
 }
 
@@ -59,4 +62,11 @@ dependencies {
     // implementation ('com.google.code.gson:gson:2.8.6') {
     //     transitive = false
     // }
+    implementation rfg.deobf('curse.maven:tough-as-nails-246391:2710969')
+    implementation rfg.deobf('curse.maven:atum-59621:3116599')
+//    implementation rfg.deobf('curse.maven:treasure2-289760:3131558')
+//    implementation rfg.deobf("curse.maven:gottschcore-272450:2968094")
+    implementation rfg.deobf("curse.maven:mantle-74924:2713386")
+    implementation rfg.deobf("curse.maven:tinkers-construct-74072:2902483")
+    runtimeOnly "mezz.jei:jei_1.12.2:4.16.1.1012"
 }

@@ -1,5 +1,5 @@
 {
-	"package": "",
+	"package": "su.shadl7.sitscore.mixin",
 	"required": true,
 	"refmap": "${mixin_refmap}",
 	"target": "@env(DEFAULT)",
