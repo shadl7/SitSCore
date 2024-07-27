@@ -4,6 +4,7 @@ import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Lists;
 
 import net.minecraft.client.Minecraft;
+import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.entity.player.InventoryPlayer;
 import net.minecraft.inventory.Slot;
 import net.minecraft.item.Item;
@@ -39,10 +40,11 @@ import slimeknights.tconstruct.tools.common.client.module.GuiSideInventory;
 import slimeknights.tconstruct.tools.common.inventory.ContainerPartBuilder;
 import slimeknights.tconstruct.tools.common.inventory.ContainerPatternChest;
 import slimeknights.tconstruct.tools.common.inventory.ContainerTinkerStation;
-import su.shadl7.sitscore.SitSCoreMod;
 import su.shadl7.sitscore.Tags;
 import su.shadl7.sitscore.container.ContainerPartBuilderEx;
 import su.shadl7.sitscore.tileentity.TilePartBuilderEx;
+
+import static su.shadl7.sitscore.SitSCoreMod.patterns;
 
 @SideOnly(Side.CLIENT)
 public class GuiPartBuilderEx extends GuiTinkerStation {
@@ -59,8 +61,7 @@ public class GuiPartBuilderEx extends GuiTinkerStation {
     protected GuiInfoPanel info;
     protected GuiSideInventory sideInventory;
     protected ContainerPatternChest.DynamicChestInventory chestContainer;
-
-    private List<ItemStack> patterns;
+    protected int selectedPattern = 8;
 
     public GuiPartBuilderEx(InventoryPlayer playerInv, World world, BlockPos pos, TilePartBuilderEx tile) {
         super(world, pos, (ContainerTinkerStation) tile.createContainer(playerInv, world, pos));
@@ -85,7 +86,6 @@ public class GuiPartBuilderEx extends GuiTinkerStation {
             info = new GuiInfoPanel(this, container);
             info.ySize = this.ySize;
             this.addModule(info);
-            generatePatternCache();
         }
     }
 
@@ -283,25 +283,17 @@ public class GuiPartBuilderEx extends GuiTinkerStation {
             int x = 44 + 17 * (i % SELECTOR_COLS),
                     y = 18 + 17 * (i / SELECTOR_COLS);
             render.renderItemIntoGUI(patterns.get(i), x, y);
-        }
-    }
+            if (i == selectedPattern) {
 
-    private void generatePatternCache() {
-        patterns = new ArrayList<>();
-        var toolParts = TinkerRegistry.getPatternItems();
-        var patternBaseItem = Item.REGISTRY.getObject(new ResourceLocation("tconstruct", "pattern"));
-        for (var toolPart : toolParts) {
-            var patternVariant = new ItemStack(patternBaseItem);
-            patternVariant.setTagInfo("PartType", new NBTTagString(toolPart.getRegistryName().toString()));
-            patterns.add(patternVariant);
+            }
         }
-        patterns = ImmutableList.copyOf(patterns);
     }
 
     @Override
     protected void renderHoveredToolTip(int mouseX, int mouseY) {
         super.renderHoveredToolTip(mouseX, mouseY);
-        // Select pattern
+
+        // Select pattern gui tooltip
         for (int i = 0; i < patterns.size(); i++) {
             if (i == SELECTOR_COLS * SELECTOR_ROWS)
                 break;
@@ -309,6 +301,9 @@ public class GuiPartBuilderEx extends GuiTinkerStation {
                     y = 18 + 17 * (i / SELECTOR_COLS);
             if (this.isPointInRegion(x + 1, y + 1, 14, 14, mouseX, mouseY)) {
                 this.renderToolTip(patterns.get(i), mouseX, mouseY);
+                GlStateManager.colorMask(true, true, true, false);
+                this.drawGradientRect(x, y, x + 16, y + 16, -2130706433, -2130706433);
+                GlStateManager.colorMask(true, true, true, true);
             }
         }
     }
