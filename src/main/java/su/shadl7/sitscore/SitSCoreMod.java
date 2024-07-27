@@ -6,6 +6,7 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagString;
 import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.fml.common.Mod;
+import net.minecraftforge.fml.common.event.FMLPostInitializationEvent;
 import net.minecraftforge.fml.common.event.FMLPreInitializationEvent;
 import net.minecraftforge.fml.common.registry.GameRegistry;
 import slimeknights.tconstruct.library.TinkerRegistry;
@@ -28,7 +29,7 @@ public class SitSCoreMod {
     }
 
     @Mod.EventHandler
-    public void postInit(FMLPreInitializationEvent event) {
+    public void postInit(FMLPostInitializationEvent event) {
         generatePatternCache();
     }
 
