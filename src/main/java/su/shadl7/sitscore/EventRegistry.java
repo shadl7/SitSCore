@@ -17,6 +17,7 @@ import net.minecraftforge.fml.relauncher.SideOnly;
 import su.shadl7.sitscore.block.MagicCrystal;
 import su.shadl7.sitscore.block.MagicCrystalUnbreakable;
 import su.shadl7.sitscore.tileentity.TileMagicCube;
+import su.shadl7.sitscore.tileentity.TilePartBuilderEx;
 
 @Mod.EventBusSubscriber(modid = Tags.MOD_ID)
 public class EventRegistry {
@@ -27,6 +28,7 @@ public class EventRegistry {
     @SubscribeEvent
     public static void registrationBlock(RegistryEvent.Register<Block> event) {
         GameRegistry.registerTileEntity(TileMagicCube.class, new ResourceLocation("magic_crystal"));
+        GameRegistry.registerTileEntity(TilePartBuilderEx.class, new ResourceLocation("tilepartbuilderex"));
         event.getRegistry().register(magic_crystal);
         event.getRegistry().register(magic_crystal_ub);
     }

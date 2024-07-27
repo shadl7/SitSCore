@@ -5,8 +5,12 @@ import net.minecraftforge.fml.common.event.FMLPreInitializationEvent;
 import net.minecraftforge.fml.common.registry.GameRegistry;
 import su.shadl7.sitscore.worldgen.WorldGenStartStruct;
 
+import java.util.logging.Logger;
+
 @Mod(modid = Tags.MOD_ID, name = Tags.MOD_NAME, version = Tags.VERSION)
 public class SitSCoreMod {
+
+    public static Logger LOGGER = Logger.getLogger(Tags.MOD_ID);
 
     @Mod.EventHandler
     public void registrator(FMLPreInitializationEvent event) {
