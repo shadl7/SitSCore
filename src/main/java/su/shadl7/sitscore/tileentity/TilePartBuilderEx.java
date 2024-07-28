@@ -7,6 +7,9 @@ import net.minecraft.entity.player.InventoryPlayer;
 import net.minecraft.inventory.Container;
 import net.minecraft.item.ItemBlock;
 import net.minecraft.item.ItemStack;
+import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.network.NetworkManager;
+import net.minecraft.network.play.server.SPacketUpdateTileEntity;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 import net.minecraftforge.common.property.IExtendedBlockState;
@@ -23,7 +26,11 @@ import slimeknights.tconstruct.tools.common.inventory.ContainerPartBuilder;
 import su.shadl7.sitscore.container.ContainerPartBuilderEx;
 import su.shadl7.sitscore.gui.GuiPartBuilderEx;
 
+import javax.annotation.Nonnull;
+
 public class TilePartBuilderEx extends TileTable implements IInventoryGui {
+
+    private int selectedPattern = -1;
 
     public TilePartBuilderEx() {
         super("gui.partbuilder.name", 4);
@@ -67,5 +74,30 @@ public class TilePartBuilderEx extends TileTable implements IInventoryGui {
 
         // add inventory if needed
         return state.withProperty(BlockTable.INVENTORY, toDisplay);
+    }
+
+    public int getSelectedPattern() {
+        return selectedPattern;
+    }
+
+    public void setSelectedPattern(int selectedPattern) {
+        if (this.selectedPattern != selectedPattern)
+            this.markDirtyFast();
+        this.selectedPattern = selectedPattern;
+    }
+
+    @Nonnull
+    @Override
+    public NBTTagCompound writeToNBT(NBTTagCompound tags) {
+        var originalTags = super.writeToNBT(tags);
+        originalTags.setInteger("patternSelected", getSelectedPattern());
+        return originalTags;
+    }
+
+    @Override
+    public void readFromNBT(NBTTagCompound tags) {
+        super.readFromNBT(tags);
+        if (tags.hasKey("patternSelected"))
+            this.setSelectedPattern(tags.getInteger("patternSelected"));
     }
 }

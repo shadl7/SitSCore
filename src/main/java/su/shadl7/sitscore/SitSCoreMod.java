@@ -6,8 +6,11 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagString;
 import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.fml.common.Mod;
+import net.minecraftforge.fml.common.event.FMLInitializationEvent;
 import net.minecraftforge.fml.common.event.FMLPostInitializationEvent;
 import net.minecraftforge.fml.common.event.FMLPreInitializationEvent;
+import net.minecraftforge.fml.common.network.NetworkRegistry;
+import net.minecraftforge.fml.common.network.simpleimpl.SimpleNetworkWrapper;
 import net.minecraftforge.fml.common.registry.GameRegistry;
 import slimeknights.tconstruct.library.TinkerRegistry;
 import su.shadl7.sitscore.worldgen.WorldGenStartStruct;
@@ -24,7 +27,12 @@ public class SitSCoreMod {
     public static List<ItemStack> patterns;
 
     @Mod.EventHandler
-    public void registrator(FMLPreInitializationEvent event) {
+    public void preInit(FMLPreInitializationEvent event) {
+        PacketHandler.registerPackets();
+    }
+
+    @Mod.EventHandler
+    public void init(FMLInitializationEvent event) {
         GameRegistry.registerWorldGenerator(new WorldGenStartStruct(), 10);
     }
 

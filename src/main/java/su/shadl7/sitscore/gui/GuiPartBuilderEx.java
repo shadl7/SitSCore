@@ -4,20 +4,23 @@ import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Lists;
 
 import net.minecraft.client.Minecraft;
+import net.minecraft.client.multiplayer.WorldClient;
 import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.entity.player.InventoryPlayer;
 import net.minecraft.inventory.Slot;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
-import net.minecraft.nbt.NBTTagString;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.text.TextFormatting;
 import net.minecraft.util.text.translation.I18n;
 import net.minecraft.world.World;
+import net.minecraft.world.WorldProvider;
+import net.minecraftforge.common.DimensionManager;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -40,9 +43,13 @@ import slimeknights.tconstruct.tools.common.client.module.GuiSideInventory;
 import slimeknights.tconstruct.tools.common.inventory.ContainerPartBuilder;
 import slimeknights.tconstruct.tools.common.inventory.ContainerPatternChest;
 import slimeknights.tconstruct.tools.common.inventory.ContainerTinkerStation;
+import su.shadl7.sitscore.PacketHandler;
 import su.shadl7.sitscore.Tags;
 import su.shadl7.sitscore.container.ContainerPartBuilderEx;
+import su.shadl7.sitscore.network.PacketButtonSync;
 import su.shadl7.sitscore.tileentity.TilePartBuilderEx;
+
+import javax.annotation.Nonnull;
 
 import static su.shadl7.sitscore.SitSCoreMod.patterns;
 
@@ -61,7 +68,8 @@ public class GuiPartBuilderEx extends GuiTinkerStation {
     protected GuiInfoPanel info;
     protected GuiSideInventory sideInventory;
     protected ContainerPatternChest.DynamicChestInventory chestContainer;
-    protected int selectedPattern = 8;
+
+    protected List<GuiButtonPattern> patternButtons;
 
     public GuiPartBuilderEx(InventoryPlayer playerInv, World world, BlockPos pos, TilePartBuilderEx tile) {
         super(world, pos, (ContainerTinkerStation) tile.createContainer(playerInv, world, pos));
@@ -87,6 +95,30 @@ public class GuiPartBuilderEx extends GuiTinkerStation {
             info.ySize = this.ySize;
             this.addModule(info);
         }
+    }
+
+    @Override
+    public void initGui() {
+        super.initGui();
+        generateButtons();
+    }
+
+    private void generateButtons() {
+        patternButtons = new ArrayList<>();
+        for (int i = 0; i < patterns.size(); i++) {
+            int x = 44 + this.cornerX + 17 * (i % SELECTOR_COLS),
+                    y = 18 + this.cornerY + 17 * (i / SELECTOR_COLS);
+            var button = new GuiButtonPattern(i, x, y, i);
+            button.visible = false;
+            patternButtons.add(button);
+        }
+        patternButtons = ImmutableList.copyOf(patternButtons);
+    }
+
+    @Override
+    public void onResize(@Nonnull Minecraft mc, int width, int height) {
+        super.onResize(mc, width, height);
+        generateButtons();
     }
 
     @Override
@@ -149,6 +181,8 @@ public class GuiPartBuilderEx extends GuiTinkerStation {
             x -= fontRenderer.getStringWidth(text) / 2;
             fontRenderer.renderString(text, x, y, 0x777777, false);
         }
+
+        drawPatternSelector(mouseX, mouseY, partialTicks);
 
         super.drawGuiContainerBackgroundLayer(partialTicks, mouseX, mouseY);
     }
@@ -269,23 +303,17 @@ public class GuiPartBuilderEx extends GuiTinkerStation {
         return null;
     }
 
-    @Override
-    protected void drawGuiContainerForegroundLayer(int mouseX, int mouseY) {
-        drawPatternSelector();
-        super.drawGuiContainerForegroundLayer(mouseX, mouseY);
-    }
-
-    private void drawPatternSelector() {
-        var render = Minecraft.getMinecraft().getRenderItem();
-        for (int i = 0; i < patterns.size(); i++) {
+    private void drawPatternSelector(int mouseX, int mouseY, float patitialTicks) {
+        for (int i = 0; i < patternButtons.size(); i++) {
             if (i == SELECTOR_COLS * SELECTOR_ROWS)
                 break;
-            int x = 44 + 17 * (i % SELECTOR_COLS),
-                    y = 18 + 17 * (i / SELECTOR_COLS);
-            render.renderItemIntoGUI(patterns.get(i), x, y);
-            if (i == selectedPattern) {
-
-            }
+            patternButtons.get(i).visible = true;
+            patternButtons.get(i).drawButton(mc, mouseX, mouseY, patitialTicks);
+        }
+        if (inventorySlots instanceof ContainerPartBuilderEx container) {
+            int patternIndex = container.getTile().getSelectedPattern();
+            if (0 <= patternIndex && patternIndex < patternButtons.size())
+                drawHoveringText(String.valueOf(patternIndex), 4, 4);
         }
     }
 
@@ -302,8 +330,24 @@ public class GuiPartBuilderEx extends GuiTinkerStation {
             if (this.isPointInRegion(x + 1, y + 1, 14, 14, mouseX, mouseY)) {
                 this.renderToolTip(patterns.get(i), mouseX, mouseY);
                 GlStateManager.colorMask(true, true, true, false);
-                this.drawGradientRect(x, y, x + 16, y + 16, -2130706433, -2130706433);
+                this.drawGradientRect(x + this.cornerX, y + this.cornerY,
+                        x + this.cornerX + 16, y + this.cornerY + 16,
+                        -2130706433, -2130706433);
                 GlStateManager.colorMask(true, true, true, true);
+            }
+        }
+    }
+
+    @Override
+    protected void mouseClicked(int mouseX, int mouseY, int mouseButton) throws IOException {
+        super.mouseClicked(mouseX, mouseY, mouseButton);
+
+        for (GuiButtonPattern patternButton : patternButtons) {
+            if (this.isPointInRegion(patternButton.x - this.cornerX , patternButton.y - this.cornerY,
+                    16, 16, mouseX, mouseY) &&
+                    inventorySlots instanceof ContainerPartBuilderEx partBuilderContainer && patternButton.visible) {
+                partBuilderContainer.getTile().setSelectedPattern(patternButton.patternIndex);
+                PacketHandler.INSTANCE.sendToServer(new PacketButtonSync(patternButton.patternIndex));
             }
         }
     }
