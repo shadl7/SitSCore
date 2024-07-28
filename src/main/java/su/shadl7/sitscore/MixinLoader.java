@@ -5,6 +5,7 @@ import zone.rong.mixinbooter.ILateMixinLoader;
 
 import java.util.List;
 
+@SuppressWarnings("unused")
 public class MixinLoader implements ILateMixinLoader {
     @Override
     public List<String> getMixinConfigs() {
