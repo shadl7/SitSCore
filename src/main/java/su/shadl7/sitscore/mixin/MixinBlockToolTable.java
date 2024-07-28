@@ -9,7 +9,7 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 import slimeknights.tconstruct.tools.common.block.BlockToolTable;
 import su.shadl7.sitscore.tileentity.TilePartBuilderEx;
 
-@Mixin(value = BlockToolTable.class, remap = false)
+@Mixin(value = BlockToolTable.class)
 public class MixinBlockToolTable {
     @Inject(method = "createNewTileEntity", at= @At(value = "NEW",
             target = "()Lslimeknights/tconstruct/tools/common/tileentity/TilePartBuilder;"), cancellable = true)
