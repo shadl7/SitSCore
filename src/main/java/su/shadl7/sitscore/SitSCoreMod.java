@@ -1,21 +1,15 @@
 package su.shadl7.sitscore;
 
 import com.google.common.collect.ImmutableList;
-import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
-import net.minecraft.nbt.NBTTagString;
-import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.common.event.FMLInitializationEvent;
 import net.minecraftforge.fml.common.event.FMLPostInitializationEvent;
 import net.minecraftforge.fml.common.event.FMLPreInitializationEvent;
-import net.minecraftforge.fml.common.network.NetworkRegistry;
-import net.minecraftforge.fml.common.network.simpleimpl.SimpleNetworkWrapper;
 import net.minecraftforge.fml.common.registry.GameRegistry;
 import slimeknights.tconstruct.library.TinkerRegistry;
 import su.shadl7.sitscore.worldgen.WorldGenStartStruct;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.logging.Logger;
 
@@ -24,6 +18,7 @@ public class SitSCoreMod {
 
     public static Logger LOGGER = Logger.getLogger(Tags.MOD_ID);
 
+    // TODO: remove
     public static List<ItemStack> patterns;
 
     @Mod.EventHandler

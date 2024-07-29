@@ -20,6 +20,7 @@ import javax.annotation.Nonnull;
 import slimeknights.mantle.inventory.IContainerCraftingCustom;
 import slimeknights.mantle.inventory.SlotCraftingCustom;
 import slimeknights.mantle.inventory.SlotOut;
+import slimeknights.tconstruct.library.TinkerRegistry;
 import slimeknights.tconstruct.library.Util;
 import slimeknights.tconstruct.library.events.TinkerCraftingEvent;
 import slimeknights.tconstruct.library.modifiers.TinkerGuiException;
@@ -32,7 +33,6 @@ import slimeknights.tconstruct.tools.common.inventory.ContainerTinkerStation;
 import slimeknights.tconstruct.tools.common.inventory.SlotStencil;
 import slimeknights.tconstruct.tools.common.tileentity.TilePatternChest;
 import su.shadl7.sitscore.PacketHandler;
-import su.shadl7.sitscore.SitSCoreMod;
 import su.shadl7.sitscore.gui.GuiPartBuilderEx;
 import su.shadl7.sitscore.network.PacketButtonSync;
 import su.shadl7.sitscore.tileentity.TilePartBuilderEx;
@@ -40,7 +40,6 @@ import su.shadl7.sitscore.tileentity.TilePartBuilderEx;
 public class ContainerPartBuilderEx extends ContainerTinkerStation<TilePartBuilderEx> implements IContainerCraftingCustom {
 
     public IInventory craftResult;
-    //public IInventory craftResultSecondary;
 
     private final Slot patternSlot;
     private final Slot secondarySlot;
@@ -124,7 +123,7 @@ public class ContainerPartBuilderEx extends ContainerTinkerStation<TilePartBuild
     // Sets the result in the output slot depending on the input!
     public void updateResult() {
         // no pattern -> no output
-        if(!patternSlot.getHasStack() || (!input1.getHasStack() && !input2.getHasStack() && !secondarySlot.getHasStack())) {
+        if(getTile().getSelectedPattern() == -1 || (!input1.getHasStack() && !input2.getHasStack() && !secondarySlot.getHasStack())) {
             craftResult.setInventorySlotContents(0, ItemStack.EMPTY);
             updateGUI();
         }
@@ -132,7 +131,8 @@ public class ContainerPartBuilderEx extends ContainerTinkerStation<TilePartBuild
             Throwable throwable = null;
             NonNullList<ItemStack> toolPart;
             try {
-                toolPart = ToolBuilder.tryBuildToolPart(patternSlot.getStack(), ListUtil.getListFrom(input1.getStack(), input2.getStack()), false);
+                var pattern = TinkerRegistry.getStencilTableCrafting().get(getTile().getSelectedPattern());
+                toolPart = ToolBuilder.tryBuildToolPart(pattern, ListUtil.getListFrom(input1.getStack(), input2.getStack()), false);
                 if(toolPart != null && !toolPart.get(0).isEmpty()) {
                     TinkerCraftingEvent.ToolPartCraftingEvent.fireEvent(toolPart.get(0), player);
                 }
@@ -183,7 +183,8 @@ public class ContainerPartBuilderEx extends ContainerTinkerStation<TilePartBuild
     public void onCrafting(EntityPlayer player, ItemStack output, IInventory craftMatrix) {
         NonNullList<ItemStack> toolPart = NonNullList.create();
         try {
-            toolPart = ToolBuilder.tryBuildToolPart(patternSlot.getStack(), ListUtil.getListFrom(input1.getStack(), input2.getStack()), true);
+            toolPart = ToolBuilder.tryBuildToolPart(TinkerRegistry.getStencilTableCrafting().get(getTile().getSelectedPattern()),
+                    ListUtil.getListFrom(input1.getStack(), input2.getStack()), true);
         } catch(TinkerGuiException e) {
             // don't need any user information at this stage
         }
@@ -212,9 +213,9 @@ public class ContainerPartBuilderEx extends ContainerTinkerStation<TilePartBuild
     }
 
     @Override
-    public boolean canMergeSlot(ItemStack p_94530_1_, Slot p_94530_2_) {
+    public boolean canMergeSlot(ItemStack itemstack, Slot slot) {
         // prevents that doubleclicking on an item pulls the same out of the crafting slot
-        return p_94530_2_.inventory != this.craftResult && super.canMergeSlot(p_94530_1_, p_94530_2_);
+        return slot.inventory != this.craftResult && super.canMergeSlot(itemstack, slot);
     }
 
     @Override
@@ -248,6 +249,7 @@ public class ContainerPartBuilderEx extends ContainerTinkerStation<TilePartBuild
         return ret;
     }
 
+    // Server side -> client side pattern select sync
     public void syncPattern(int selectedPattern, World world, BlockPos tile) {
         for (var player : world.playerEntities) {
             var playerMP = (EntityPlayerMP) player;
