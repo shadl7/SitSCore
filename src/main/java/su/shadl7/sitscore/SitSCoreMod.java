@@ -42,14 +42,6 @@ public class SitSCoreMod {
     }
 
     private void generatePatternCache() {
-        patterns = new ArrayList<>();
-        var toolParts = TinkerRegistry.getPatternItems();
-        var patternBaseItem = Item.REGISTRY.getObject(new ResourceLocation("tconstruct", "pattern"));
-        for (var toolPart : toolParts) {
-            var patternVariant = new ItemStack(patternBaseItem);
-            patternVariant.setTagInfo("PartType", new NBTTagString(toolPart.getRegistryName().toString()));
-            patterns.add(patternVariant);
-        }
-        patterns = ImmutableList.copyOf(patterns);
+        patterns = ImmutableList.copyOf(TinkerRegistry.getStencilTableCrafting());
     }
 }

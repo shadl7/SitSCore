@@ -4,7 +4,6 @@ import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Lists;
 
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.multiplayer.WorldClient;
 import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.entity.player.InventoryPlayer;
 import net.minecraft.inventory.Slot;
@@ -15,8 +14,6 @@ import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.text.TextFormatting;
 import net.minecraft.util.text.translation.I18n;
 import net.minecraft.world.World;
-import net.minecraft.world.WorldProvider;
-import net.minecraftforge.common.DimensionManager;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
@@ -40,7 +37,6 @@ import slimeknights.tconstruct.library.utils.ListUtil;
 import slimeknights.tconstruct.tools.common.client.GuiTinkerStation;
 import slimeknights.tconstruct.tools.common.client.module.GuiInfoPanel;
 import slimeknights.tconstruct.tools.common.client.module.GuiSideInventory;
-import slimeknights.tconstruct.tools.common.inventory.ContainerPartBuilder;
 import slimeknights.tconstruct.tools.common.inventory.ContainerPatternChest;
 import slimeknights.tconstruct.tools.common.inventory.ContainerTinkerStation;
 import su.shadl7.sitscore.PacketHandler;
@@ -123,8 +119,7 @@ public class GuiPartBuilderEx extends GuiTinkerStation {
 
     @Override
     public void drawSlot(Slot slotIn) {
-        if(inventorySlots instanceof ContainerPartBuilder) {
-            ContainerPartBuilder container = (ContainerPartBuilder) inventorySlots;
+        if(inventorySlots instanceof ContainerPartBuilderEx container) {
             if(container.isPartCrafter() && slotIn.inventory == container.patternChest) {
                 return;
             }
@@ -135,8 +130,7 @@ public class GuiPartBuilderEx extends GuiTinkerStation {
 
     @Override
     public boolean isMouseOverSlot(Slot slotIn, int mouseX, int mouseY) {
-        if(inventorySlots instanceof ContainerPartBuilder) {
-            ContainerPartBuilder container = (ContainerPartBuilder) inventorySlots;
+        if(inventorySlots instanceof ContainerPartBuilderEx container) {
             if(container.isPartCrafter() && slotIn.inventory == container.patternChest) {
                 return false;
             }
@@ -345,8 +339,7 @@ public class GuiPartBuilderEx extends GuiTinkerStation {
         for (GuiButtonPattern patternButton : patternButtons) {
             if (this.isPointInRegion(patternButton.x - this.cornerX , patternButton.y - this.cornerY,
                     16, 16, mouseX, mouseY) &&
-                    inventorySlots instanceof ContainerPartBuilderEx partBuilderContainer && patternButton.visible) {
-                partBuilderContainer.getTile().setSelectedPattern(patternButton.patternIndex);
+                    inventorySlots instanceof ContainerPartBuilderEx && patternButton.visible) {
                 PacketHandler.INSTANCE.sendToServer(new PacketButtonSync(patternButton.patternIndex));
             }
         }

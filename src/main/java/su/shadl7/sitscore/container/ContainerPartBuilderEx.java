@@ -3,15 +3,13 @@ package su.shadl7.sitscore.container;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.client.Minecraft;
 import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.entity.player.InventoryPlayer;
-import net.minecraft.inventory.ClickType;
-import net.minecraft.inventory.Container;
-import net.minecraft.inventory.IInventory;
-import net.minecraft.inventory.InventoryCraftResult;
-import net.minecraft.inventory.Slot;
+import net.minecraft.inventory.*;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.NonNullList;
 import net.minecraft.util.math.BlockPos;
+import net.minecraft.world.World;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
@@ -29,12 +27,14 @@ import slimeknights.tconstruct.library.utils.ListUtil;
 import slimeknights.tconstruct.library.utils.ToolBuilder;
 import slimeknights.tconstruct.shared.inventory.InventoryCraftingPersistent;
 import slimeknights.tconstruct.tools.common.block.BlockToolTable;
-import slimeknights.tconstruct.tools.common.client.GuiPartBuilder;
 import slimeknights.tconstruct.tools.common.inventory.ContainerPatternChest;
 import slimeknights.tconstruct.tools.common.inventory.ContainerTinkerStation;
 import slimeknights.tconstruct.tools.common.inventory.SlotStencil;
-import slimeknights.tconstruct.tools.common.tileentity.TilePartBuilder;
 import slimeknights.tconstruct.tools.common.tileentity.TilePatternChest;
+import su.shadl7.sitscore.PacketHandler;
+import su.shadl7.sitscore.SitSCoreMod;
+import su.shadl7.sitscore.gui.GuiPartBuilderEx;
+import su.shadl7.sitscore.network.PacketButtonSync;
 import su.shadl7.sitscore.tileentity.TilePartBuilderEx;
 
 public class ContainerPartBuilderEx extends ContainerTinkerStation<TilePartBuilderEx> implements IContainerCraftingCustom {
@@ -164,9 +164,8 @@ public class ContainerPartBuilderEx extends ContainerTinkerStation<TilePartBuild
 
     /** Looks for a pattern that matches the given one in the PatternChest and exchanges it with the pattern slot */
     public void setPattern(ItemStack wanted) {
-        if(patternChest == null) {
+        if(patternChest == null)
             return;
-        }
 
         // check chest contents for wanted
         for(int i = 0; i < patternChest.getSizeInventory(); i++) {
@@ -188,19 +187,18 @@ public class ContainerPartBuilderEx extends ContainerTinkerStation<TilePartBuild
         } catch(TinkerGuiException e) {
             // don't need any user information at this stage
         }
-        if(toolPart == null) {
+        if (toolPart == null) {
             // undefined :I
             return;
         }
 
         ItemStack secondOutput = toolPart.get(1);
         ItemStack secondary = secondarySlot.getStack();
-        if(secondary.isEmpty()) {
+        if (secondary.isEmpty())
             putStackInSlot(secondarySlot.slotNumber, secondOutput);
-        }
-        else if(!secondOutput.isEmpty() && ItemStack.areItemsEqual(secondary, secondOutput) && ItemStack.areItemStackTagsEqual(secondary, secondOutput)) {
+        else if (!secondOutput.isEmpty() && ItemStack.areItemsEqual(secondary, secondOutput)
+                && ItemStack.areItemStackTagsEqual(secondary, secondOutput))
             secondary.grow(secondOutput.getCount());
-        }
 
         // clean up 0 size stacks
         // todo: this shouldn't be needed anymore, check
@@ -221,9 +219,8 @@ public class ContainerPartBuilderEx extends ContainerTinkerStation<TilePartBuild
 
     @Override
     public String getInventoryDisplayName() {
-        if(partCrafter) {
+        if (partCrafter)
             return Util.translate("gui.partcrafter.name");
-        }
 
         return super.getInventoryDisplayName();
     }
@@ -235,9 +232,8 @@ public class ContainerPartBuilderEx extends ContainerTinkerStation<TilePartBuild
 
         // this is called solely to update the gui buttons
         Minecraft mc = Minecraft.getMinecraft();
-        if(mc.currentScreen instanceof GuiPartBuilder) {
-            ((GuiPartBuilder) mc.currentScreen).updateButtons();
-        }
+        if (mc.currentScreen instanceof GuiPartBuilderEx gui)
+            gui.updateButtons();
     }
 
     @Override
@@ -246,10 +242,18 @@ public class ContainerPartBuilderEx extends ContainerTinkerStation<TilePartBuild
         ItemStack ret = super.slotClick(slotId, dragType, type, player);
         // this is called solely to update the gui buttons
         Minecraft mc = Minecraft.getMinecraft();
-        if(mc.currentScreen instanceof GuiPartBuilder) {
-            ((GuiPartBuilder) mc.currentScreen).updateButtons();
-        }
+        if (mc.currentScreen instanceof GuiPartBuilderEx gui)
+            gui.updateButtons();
 
         return ret;
+    }
+
+    public void syncPattern(int selectedPattern, World world, BlockPos tile) {
+        for (var player : world.playerEntities) {
+            var playerMP = (EntityPlayerMP) player;
+            if (player.openContainer instanceof ContainerPartBuilderEx container)
+                if (container.getTile().getPos() == tile)
+                    PacketHandler.INSTANCE.sendTo(new PacketButtonSync(selectedPattern), playerMP);
+        }
     }
 }

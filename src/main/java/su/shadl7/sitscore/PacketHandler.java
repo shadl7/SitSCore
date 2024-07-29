@@ -10,6 +10,7 @@ public class PacketHandler {
     private static int id = 0;
 
     public static void registerPackets() {
-        INSTANCE.registerMessage(PacketButtonSync.Handler.class, PacketButtonSync.class, id++, Side.SERVER);
+        INSTANCE.registerMessage(PacketButtonSync.HandlerServer.class, PacketButtonSync.class, id++, Side.SERVER);
+        INSTANCE.registerMessage(PacketButtonSync.HandlerClient.class, PacketButtonSync.class, id++, Side.CLIENT);
     }
 }

@@ -19,7 +19,6 @@ import slimeknights.tconstruct.library.client.Icons;
 import slimeknights.tconstruct.library.tinkering.MaterialItem;
 import slimeknights.tconstruct.library.tools.Pattern;
 import slimeknights.tconstruct.tools.common.client.GuiButtonItem;
-import slimeknights.tconstruct.tools.common.client.GuiPartBuilder;
 import slimeknights.tconstruct.tools.common.client.module.GuiSideButtons;
 import slimeknights.tconstruct.tools.common.network.PartCrafterSelectionPacket;
 
@@ -28,7 +27,7 @@ public class GuiButtonsPartCrafterEx extends GuiSideButtons {
     private final IInventory patternChest;
 
     public GuiButtonsPartCrafterEx(GuiPartBuilderEx parent, Container container, IInventory patternChest) {
-        super(parent, container, GuiPartBuilder.Column_Count, false);
+        super(parent, container, GuiPartBuilderEx.Column_Count, false);
 
         this.patternChest = patternChest;
     }

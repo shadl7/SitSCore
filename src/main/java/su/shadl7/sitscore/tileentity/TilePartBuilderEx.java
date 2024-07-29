@@ -8,8 +8,6 @@ import net.minecraft.inventory.Container;
 import net.minecraft.item.ItemBlock;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
-import net.minecraft.network.NetworkManager;
-import net.minecraft.network.play.server.SPacketUpdateTileEntity;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 import net.minecraftforge.common.property.IExtendedBlockState;
@@ -21,8 +19,6 @@ import slimeknights.tconstruct.shared.block.BlockTable;
 import slimeknights.tconstruct.shared.block.PropertyTableItem;
 import slimeknights.tconstruct.shared.inventory.ConfigurableInvWrapperCapability;
 import slimeknights.tconstruct.shared.tileentity.TileTable;
-import slimeknights.tconstruct.tools.common.client.GuiPartBuilder;
-import slimeknights.tconstruct.tools.common.inventory.ContainerPartBuilder;
 import su.shadl7.sitscore.container.ContainerPartBuilderEx;
 import su.shadl7.sitscore.gui.GuiPartBuilderEx;
 
@@ -81,8 +77,9 @@ public class TilePartBuilderEx extends TileTable implements IInventoryGui {
     }
 
     public void setSelectedPattern(int selectedPattern) {
-        if (this.selectedPattern != selectedPattern)
+        if (this.selectedPattern != selectedPattern) {
             this.markDirtyFast();
+        }
         this.selectedPattern = selectedPattern;
     }
 
