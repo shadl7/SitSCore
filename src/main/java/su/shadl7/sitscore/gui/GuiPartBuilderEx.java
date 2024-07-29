@@ -340,7 +340,7 @@ public class GuiPartBuilderEx extends GuiTinkerStation {
             if (this.isPointInRegion(patternButton.x - this.cornerX , patternButton.y - this.cornerY,
                     16, 16, mouseX, mouseY) &&
                     inventorySlots instanceof ContainerPartBuilderEx && patternButton.visible) {
-                PacketHandler.INSTANCE.sendToServer(new PacketButtonSync(patternButton.patternIndex));
+                PacketHandler.INSTANCE.sendToServer(new PacketButtonSync(patternButton.id));
             }
         }
     }
