@@ -4,15 +4,11 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiButton;
 import net.minecraft.client.renderer.GlStateManager;
 
-import java.util.function.Consumer;
-
 import static su.shadl7.sitscore.SitSCoreMod.patterns;
 
 public class GuiButtonPattern extends GuiButton {
-    final public int patternIndex;
-    public GuiButtonPattern (int buttonId1, int x1, int y1, int patternIndex) {
+    public GuiButtonPattern (int buttonId1, int x1, int y1) {
         super(buttonId1, x1, y1, 16, 16, "");
-        this.patternIndex = patternIndex;
     }
 
     @Override
@@ -30,7 +26,7 @@ public class GuiButtonPattern extends GuiButton {
             this.drawTexturedModalRect(this.x, this.y, 0, 46 + i * 20, this.width / 2, this.height);
             this.drawTexturedModalRect(this.x + this.width / 2, this.y, 200 - this.width / 2, 46 + i * 20, this.width / 2, this.height);
             this.mouseDragged(mc, mouseX, mouseY);
-            render.renderItemIntoGUI(patterns.get(patternIndex), x, y);
+            render.renderItemIntoGUI(patterns.get(id), x, y);
         }
     }
 }

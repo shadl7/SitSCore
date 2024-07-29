@@ -104,7 +104,7 @@ public class GuiPartBuilderEx extends GuiTinkerStation {
         for (int i = 0; i < patterns.size(); i++) {
             int x = 44 + this.cornerX + 17 * (i % SELECTOR_COLS),
                     y = 18 + this.cornerY + 17 * (i / SELECTOR_COLS);
-            var button = new GuiButtonPattern(i, x, y, i);
+            var button = new GuiButtonPattern(i, x, y);
             button.visible = false;
             patternButtons.add(button);
         }
