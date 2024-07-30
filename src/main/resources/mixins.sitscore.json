@@ -9,5 +9,7 @@
 		"MixinBlockToolTable"
 	],
 	"server": [],
-	"client": []
+	"client": [
+		"MixinGuiScrollingList"
+	]
 }
