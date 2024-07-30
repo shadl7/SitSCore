@@ -29,7 +29,7 @@ public class TilePartBuilderEx extends TileTable implements IInventoryGui {
     private int selectedPattern = -1;
 
     public TilePartBuilderEx() {
-        super("gui.partbuilder.name", 4);
+        super("gui.partbuilder.name", 2);
         this.itemHandler = new ConfigurableInvWrapperCapability(this, false, false);
     }
 

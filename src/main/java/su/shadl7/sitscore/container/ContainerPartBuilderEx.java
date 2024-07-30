@@ -41,8 +41,6 @@ public class ContainerPartBuilderEx extends ContainerTinkerStation<TilePartBuild
 
     public IInventory craftResult;
 
-    private final Slot patternSlot;
-    private final Slot secondarySlot;
     private final Slot input1;
     private final Slot input2;
 
@@ -61,15 +59,10 @@ public class ContainerPartBuilderEx extends ContainerTinkerStation<TilePartBuild
 
         // output slots
         this.addSlotToContainer(new SlotCraftingCustom(this, playerInventory.player, craftMatrix, craftResult, 0, 153, 35));
-        this.addSlotToContainer(secondarySlot = new SlotOut(tile, 3, 153, 55));
-
-
-        // pattern slot
-        this.addSlotToContainer(patternSlot = new SlotStencil(craftMatrix, 2, 26, 35, false));
 
         // material slots
-        this.addSlotToContainer(input1 = new Slot(craftMatrix, 0, 5, 26));
-        this.addSlotToContainer(input2 = new Slot(craftMatrix, 1, 5, 44));
+        this.addSlotToContainer(input1 = new Slot(craftMatrix, 0, 8, 24));
+        this.addSlotToContainer(input2 = new Slot(craftMatrix, 1, 8, 46));
 
         TilePatternChest chest = detectTE(TilePatternChest.class);
         // TE present?
@@ -123,7 +116,7 @@ public class ContainerPartBuilderEx extends ContainerTinkerStation<TilePartBuild
     // Sets the result in the output slot depending on the input!
     public void updateResult() {
         // no pattern -> no output
-        if(getTile().getSelectedPattern() == -1 || (!input1.getHasStack() && !input2.getHasStack() && !secondarySlot.getHasStack())) {
+        if(getTile().getSelectedPattern() == -1 || (!input1.getHasStack() && !input2.getHasStack())) {
             craftResult.setInventorySlotContents(0, ItemStack.EMPTY);
             updateGUI();
         }
@@ -141,12 +134,9 @@ public class ContainerPartBuilderEx extends ContainerTinkerStation<TilePartBuild
                 throwable = e;
             }
 
-            ItemStack secondary = secondarySlot.getStack();
 
             // got output?
-            if(toolPart != null &&
-                    // got no secondary output or does it stack with the current one?
-                    (secondary.isEmpty() || toolPart.get(1).isEmpty() || ItemStack.areItemsEqual(secondary, toolPart.get(1)) && ItemStack.areItemStackTagsEqual(secondary, toolPart.get(1)))) {
+            if(toolPart != null) {
                 craftResult.setInventorySlotContents(0, toolPart.get(0));
             }
             else {
@@ -158,23 +148,6 @@ public class ContainerPartBuilderEx extends ContainerTinkerStation<TilePartBuild
             }
             else {
                 updateGUI();
-            }
-        }
-    }
-
-    /** Looks for a pattern that matches the given one in the PatternChest and exchanges it with the pattern slot */
-    public void setPattern(ItemStack wanted) {
-        if(patternChest == null)
-            return;
-
-        // check chest contents for wanted
-        for(int i = 0; i < patternChest.getSizeInventory(); i++) {
-            if(ItemStack.areItemStacksEqual(wanted, patternChest.getStackInSlot(i))) {
-                // found it! exchange it with the pattern slot!
-                ItemStack slotStack = patternSlot.getStack();
-                patternSlot.putStack(patternChest.getStackInSlot(i));
-                patternChest.setInventorySlotContents(i, slotStack);
-                break;
             }
         }
     }
@@ -192,22 +165,6 @@ public class ContainerPartBuilderEx extends ContainerTinkerStation<TilePartBuild
             // undefined :I
             return;
         }
-
-        ItemStack secondOutput = toolPart.get(1);
-        ItemStack secondary = secondarySlot.getStack();
-        if (secondary.isEmpty())
-            putStackInSlot(secondarySlot.slotNumber, secondOutput);
-        else if (!secondOutput.isEmpty() && ItemStack.areItemsEqual(secondary, secondOutput)
-                && ItemStack.areItemStackTagsEqual(secondary, secondOutput))
-            secondary.grow(secondOutput.getCount());
-
-        // clean up 0 size stacks
-        // todo: this shouldn't be needed anymore, check
-    /*for(int i = 0; i < craftMatrix.getSizeInventory(); i++) {
-      if(craftMatrix.getStackInSlot(i).isEmpty() != null && craftMatrix.getStackInSlot(i).stackSize == 0) {
-        craftMatrix.setInventorySlotContents(i, null);
-      }
-    }*/
 
         updateResult();
     }

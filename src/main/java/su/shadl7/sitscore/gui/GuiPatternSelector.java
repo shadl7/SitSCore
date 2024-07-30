@@ -94,22 +94,19 @@ public class GuiPatternSelector extends GuiScrollingList {
                 }
             }
         }
-        SitSCoreMod.LOGGER.info("Can't find the button in pattern selector. May be crash.");
         return new ArrayList<>();
     }
 
     public void drawHoveredTooltip(int mouseX, int mouseY, ITooltipPainter painter) {
-        if (this.isPointInRegion(this.left, this.top, this.right, this.bottom, mouseX, mouseY)) {
-            List<Integer> buttonIndexes = findButton(mouseX, mouseY);
-            if (buttonIndexes.isEmpty())
-                return;
-            painter.drawTooltip(buttonIndexes.get(2), buttonIndexes.get(3), buttonIndexes.get(4), buttonIndexes.get(5),
-                    mouseX, mouseY, buttons.get(buttonIndexes.get(0)).get(buttonIndexes.get(1)).getPattern());
-        }
+        List<Integer> buttonIndexes = findButton(mouseX, mouseY);
+        if (buttonIndexes.isEmpty())
+            return;
+        painter.drawTooltip(buttonIndexes.get(2), buttonIndexes.get(3), buttonIndexes.get(4), buttonIndexes.get(5),
+                mouseX, mouseY, buttons.get(buttonIndexes.get(0)).get(buttonIndexes.get(1)).getPattern());
     }
 
     public void onMouseClick(int mouseX, int mouseY, int mouseButton) {
-        if (mouseButton == 0 && this.isPointInRegion(this.left, this.top, this.right, this.bottom, mouseX, mouseY)) {
+        if (mouseButton == 0) {
             List<Integer> buttonIndexes = findButton(mouseX, mouseY);
             if (buttonIndexes.isEmpty())
                 return;

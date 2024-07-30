@@ -92,7 +92,7 @@ public class GuiPartBuilderEx extends GuiTinkerStation implements ITooltipPainte
     public void initGui() {
         super.initGui();
         selector = new GuiPatternSelector(Minecraft.getMinecraft(),
-                90, 19 + this.cornerY, 3, 44 + cornerX, 16);
+                90, 19 + this.cornerY, SELECTOR_ROWS, 44 + cornerX, 16);
     }
 
     @Override
@@ -124,18 +124,15 @@ public class GuiPartBuilderEx extends GuiTinkerStation implements ITooltipPainte
             sideInventory.updateSlotCount(chestContainer.getSizeInventory());
         }
 
-        // draw slot icons
-        drawIconEmpty(container.getSlot(1), Icons.ICON_Shard);
-        drawIconEmpty(container.getSlot(2), Icons.ICON_Pattern);
-        drawIconEmpty(container.getSlot(3), Icons.ICON_Ingot);
-        drawIconEmpty(container.getSlot(4), Icons.ICON_Block);
+        drawIconEmpty(container.getSlot(1), Icons.ICON_Ingot);
+        drawIconEmpty(container.getSlot(2), Icons.ICON_Block);
 
         // draw material info
         String amount = null;
-        Material material = getMaterial(container.getSlot(3).getStack(), container.getSlot(4).getStack());
+        Material material = getMaterial(container.getSlot(1).getStack(), container.getSlot(2).getStack());
         if(material != null) {
             int count = 0;
-            Optional<RecipeMatch.Match> matchOptional = material.matchesRecursively(ListUtil.getListFrom(container.getSlot(3).getStack(), container.getSlot(4).getStack()));
+            Optional<RecipeMatch.Match> matchOptional = material.matchesRecursively(ListUtil.getListFrom(container.getSlot(1).getStack(), container.getSlot(2).getStack()));
             if(matchOptional.isPresent()) {
                 int matchAmount = matchOptional.get().amount;
                 amount = Util.df.format(matchAmount / (float) Material.VALUE_Ingot);
@@ -183,7 +180,7 @@ public class GuiPartBuilderEx extends GuiTinkerStation implements ITooltipPainte
         // no output, check input
         else {
             // is our input a material item?
-            Material material = getMaterial(container.getSlot(3).getStack(), container.getSlot(4).getStack());
+            Material material = getMaterial(container.getSlot(1).getStack(), container.getSlot(2).getStack());
             if(material != null) {
                 setDisplayForMaterial(material);
             }
