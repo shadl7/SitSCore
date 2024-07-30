@@ -50,7 +50,7 @@ import javax.annotation.Nonnull;
 import static su.shadl7.sitscore.SitSCoreMod.patterns;
 
 @SideOnly(Side.CLIENT)
-public class GuiPartBuilderEx extends GuiTinkerStation {
+public class GuiPartBuilderEx extends GuiTinkerStation implements ITooltipPainter {
 
     private static final ResourceLocation BACKGROUND = new ResourceLocation(Tags.MOD_ID,
             "textures/gui/part_table.png");
@@ -97,7 +97,7 @@ public class GuiPartBuilderEx extends GuiTinkerStation {
     public void initGui() {
         super.initGui();
         selector = new GuiPatternSelector(Minecraft.getMinecraft(),
-                90, 18 + this.cornerY, 3, 44 + cornerX, 16);
+                90, 19 + this.cornerY, 3, 44 + cornerX, 16);
     }
 
     @Override
@@ -280,40 +280,10 @@ public class GuiPartBuilderEx extends GuiTinkerStation {
         return null;
     }
 
-    /*private void drawPatternSelector(int mouseX, int mouseY, float patitialTicks) {
-        for (int i = 0; i < patternButtons.size(); i++) {
-            if (i == SELECTOR_COLS * SELECTOR_ROWS)
-                break;
-            int x = 44 + this.cornerX + 17 * (i % SELECTOR_COLS),
-                    y = 18 + this.cornerY + 17 * (i / SELECTOR_COLS);
-            patternButtons.get(i).draw(mc, x, y);
-        }
-        if (inventorySlots instanceof ContainerPartBuilderEx container) {
-            int patternIndex = container.getTile().getSelectedPattern();
-            if (0 <= patternIndex && patternIndex < patternButtons.size())
-                drawHoveringText(String.valueOf(patternIndex), 4, 4);
-        }
-    }*/
-
     @Override
     protected void renderHoveredToolTip(int mouseX, int mouseY) {
         super.renderHoveredToolTip(mouseX, mouseY);
-
-        // Select pattern gui tooltip
-        for (int i = 0; i < patterns.size(); i++) {
-            if (i == SELECTOR_COLS * SELECTOR_ROWS)
-                break;
-            int x = 44 + 17 * (i % SELECTOR_COLS),
-                    y = 18 + 17 * (i / SELECTOR_COLS);
-            if (this.isPointInRegion(x + 1, y + 1, 14, 14, mouseX, mouseY)) {
-                this.renderToolTip(patterns.get(i), mouseX, mouseY);
-                GlStateManager.colorMask(true, true, true, false);
-                this.drawGradientRect(x + this.cornerX, y + this.cornerY,
-                        x + this.cornerX + 16, y + this.cornerY + 16,
-                        -2130706433, -2130706433);
-                GlStateManager.colorMask(true, true, true, true);
-            }
-        }
+        selector.drawHoveredTooltip(mouseX, mouseY, this);
     }
 
     @Override
@@ -339,5 +309,13 @@ public class GuiPartBuilderEx extends GuiTinkerStation {
     public void handleMouseInput() throws IOException {
         super.handleMouseInput();
         selector.handleMouseInput(Mouse.getEventX(), Mouse.getEventY());
+    }
+
+    @Override
+    public void drawTooltip(int x, int y, int x2, int y2, int mouseX, int mouseY, ItemStack pattern) {
+        this.renderToolTip(pattern, mouseX, mouseY);
+        GlStateManager.colorMask(true, true, true, false);
+        this.drawGradientRect(x, y, x2, y2, -2130706433, -2130706433);
+        GlStateManager.colorMask(true, true, true, true);
     }
 }

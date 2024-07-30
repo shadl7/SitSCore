@@ -1,9 +1,9 @@
 package su.shadl7.sitscore.gui;
 
 import net.minecraft.client.Minecraft;
+import net.minecraft.client.gui.GuiScreen;
 import net.minecraft.client.renderer.Tessellator;
 import net.minecraftforge.fml.client.GuiScrollingList;
-import net.minecraftforge.fml.client.config.GuiUtils;
 import slimeknights.tconstruct.library.TinkerRegistry;
 
 import java.util.ArrayList;
@@ -61,8 +61,31 @@ public class GuiPatternSelector extends GuiScrollingList {
     }
 
     @Override
-    protected void drawGradientRect(int left, int top, int right, int bottom, int color1, int color2)
-    {
-        //GuiUtils.drawGradientRect(0, left, top, right, bottom, color1, color2);
+    protected void drawGradientRect(int left, int top, int right, int bottom, int color1, int color2) {}
+
+    private boolean isPointInRegion(int left, int top, int right, int bottom, int pointX, int pointY) {
+        return pointX >= left - 1 && pointX < right + 1 && pointY >= top - 1 && pointY < bottom + 1;
+    }
+
+    public void drawHoveredTooltip(int mouseX, int mouseY, ITooltipPainter painter) {
+        for (int i = 0; i < buttons.size(); i++) {
+            int renderTop = this.top - (int)((IScrollerHack) this).sitSCore$getScrollDistance();
+            int slotTop = renderTop + i * this.slotHeight;
+            int slotBottom = slotTop + this.slotHeight;
+            if (slotBottom >= this.top && slotTop <= this.bottom) { // Check if button is outside selector
+                int y1 = Math.max(this.top, slotTop), // If button over/under border reset coordinate to border
+                        y2 = Math.min(this.bottom, slotBottom);
+                if (this.isPointInRegion(this.left, y1,
+                        SELECTOR_COLS * 16 + this.left, y2, mouseX, mouseY)) { // Check for all buttons in one row
+                    for (int j = 0; j < buttons.get(i).size(); j++) {
+                        int x1 = this.left + j * 16, // Calculate coordinates for every button in row
+                                x2 = this.left + (j + 1) * 16;
+                        if (this.isPointInRegion(x1, y1, x2, y2, mouseX, mouseY)) { // Check for button
+                                    painter.drawTooltip(x1, y1, x2, y2, mouseX, mouseY, buttons.get(i).get(j).getPattern());
+                        }
+                    }
+                }
+            }
+        }
     }
 }
