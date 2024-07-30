@@ -19,7 +19,6 @@ import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
 import java.io.IOException;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
@@ -44,10 +43,6 @@ import slimeknights.tconstruct.tools.common.inventory.ContainerTinkerStation;
 import su.shadl7.sitscore.Tags;
 import su.shadl7.sitscore.container.ContainerPartBuilderEx;
 import su.shadl7.sitscore.tileentity.TilePartBuilderEx;
-
-import javax.annotation.Nonnull;
-
-import static su.shadl7.sitscore.SitSCoreMod.patterns;
 
 @SideOnly(Side.CLIENT)
 public class GuiPartBuilderEx extends GuiTinkerStation implements ITooltipPainter {
@@ -308,7 +303,8 @@ public class GuiPartBuilderEx extends GuiTinkerStation implements ITooltipPainte
     @Override
     public void handleMouseInput() throws IOException {
         super.handleMouseInput();
-        selector.handleMouseInput(Mouse.getEventX(), Mouse.getEventY());
+        selector.handleMouseInput(Mouse.getEventX() * this.width / this.mc.displayWidth,
+                this.height - Mouse.getEventY() * this.height / this.mc.displayHeight - 1);
     }
 
     @Override
