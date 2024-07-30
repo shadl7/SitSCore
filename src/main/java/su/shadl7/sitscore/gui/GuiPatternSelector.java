@@ -4,13 +4,22 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiScreen;
 import net.minecraft.client.renderer.Tessellator;
 import net.minecraftforge.fml.client.GuiScrollingList;
+import net.minecraftforge.fml.relauncher.Side;
+import net.minecraftforge.fml.relauncher.SideOnly;
+import org.lwjgl.input.Mouse;
 import slimeknights.tconstruct.library.TinkerRegistry;
+import su.shadl7.sitscore.PacketHandler;
+import su.shadl7.sitscore.SitSCoreMod;
+import su.shadl7.sitscore.network.PacketButtonSync;
 
+import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 import static su.shadl7.sitscore.gui.GuiPartBuilderEx.SELECTOR_COLS;
 
+@SideOnly(Side.CLIENT)
 public class GuiPatternSelector extends GuiScrollingList {
     private final List<List<GuiButtonPattern>> buttons;
 
@@ -38,9 +47,7 @@ public class GuiPatternSelector extends GuiScrollingList {
     }
 
     @Override
-    protected void elementClicked(int index, boolean doubleClick) {
-
-    }
+    protected void elementClicked(int index, boolean doubleClick) {}
 
     @Override
     protected boolean isSelected(int index) {
@@ -67,7 +74,7 @@ public class GuiPatternSelector extends GuiScrollingList {
         return pointX >= left - 1 && pointX < right + 1 && pointY >= top - 1 && pointY < bottom + 1;
     }
 
-    public void drawHoveredTooltip(int mouseX, int mouseY, ITooltipPainter painter) {
+    private List<Integer> findButton(int mouseX, int mouseY) {
         for (int i = 0; i < buttons.size(); i++) {
             int renderTop = this.top - (int)((IScrollerHack) this).sitSCore$getScrollDistance();
             int slotTop = renderTop + i * this.slotHeight;
@@ -81,11 +88,32 @@ public class GuiPatternSelector extends GuiScrollingList {
                         int x1 = this.left + j * 16, // Calculate coordinates for every button in row
                                 x2 = this.left + (j + 1) * 16;
                         if (this.isPointInRegion(x1, y1, x2, y2, mouseX, mouseY)) { // Check for button
-                                    painter.drawTooltip(x1, y1, x2, y2, mouseX, mouseY, buttons.get(i).get(j).getPattern());
+                            return Arrays.asList(i, j, x1, y1, x2, y2);
                         }
                     }
                 }
             }
+        }
+        SitSCoreMod.LOGGER.info("Can't find the button in pattern selector. May be crash.");
+        return new ArrayList<>();
+    }
+
+    public void drawHoveredTooltip(int mouseX, int mouseY, ITooltipPainter painter) {
+        if (this.isPointInRegion(this.left, this.top, this.right, this.bottom, mouseX, mouseY)) {
+            List<Integer> buttonIndexes = findButton(mouseX, mouseY);
+            if (buttonIndexes.isEmpty())
+                return;
+            painter.drawTooltip(buttonIndexes.get(2), buttonIndexes.get(3), buttonIndexes.get(4), buttonIndexes.get(5),
+                    mouseX, mouseY, buttons.get(buttonIndexes.get(0)).get(buttonIndexes.get(1)).getPattern());
+        }
+    }
+
+    public void onMouseClick(int mouseX, int mouseY, int mouseButton) {
+        if (mouseButton == 0 && this.isPointInRegion(this.left, this.top, this.right, this.bottom, mouseX, mouseY)) {
+            List<Integer> buttonIndexes = findButton(mouseX, mouseY);
+            if (buttonIndexes.isEmpty())
+                return;
+            buttons.get(buttonIndexes.get(0)).get(buttonIndexes.get(1)).onClick();
         }
     }
 }

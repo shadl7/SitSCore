@@ -12,6 +12,8 @@ import java.io.IOException;
 import java.util.List;
 import java.util.ListIterator;
 
+import net.minecraftforge.fml.relauncher.Side;
+import net.minecraftforge.fml.relauncher.SideOnly;
 import slimeknights.tconstruct.common.TinkerNetwork;
 import slimeknights.tconstruct.library.TinkerRegistry;
 import slimeknights.tconstruct.library.client.CustomTextureCreator;
@@ -22,6 +24,7 @@ import slimeknights.tconstruct.tools.common.client.GuiButtonItem;
 import slimeknights.tconstruct.tools.common.client.module.GuiSideButtons;
 import slimeknights.tconstruct.tools.common.network.PartCrafterSelectionPacket;
 
+@SideOnly(Side.CLIENT)
 public class GuiButtonsPartCrafterEx extends GuiSideButtons {
 
     private final IInventory patternChest;

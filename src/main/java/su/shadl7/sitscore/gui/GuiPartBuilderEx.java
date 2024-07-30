@@ -284,14 +284,7 @@ public class GuiPartBuilderEx extends GuiTinkerStation implements ITooltipPainte
     @Override
     protected void mouseClicked(int mouseX, int mouseY, int mouseButton) throws IOException {
         super.mouseClicked(mouseX, mouseY, mouseButton);
-
-        /*for (GuiButtonPattern patternButton : patternButtons) {
-            if (this.isPointInRegion(patternButton.x - this.cornerX , patternButton.y - this.cornerY,
-                    16, 16, mouseX, mouseY) &&
-                    inventorySlots instanceof ContainerPartBuilderEx && patternButton.visible) {
-                PacketHandler.INSTANCE.sendToServer(new PacketButtonSync(patternButton.id));
-            }
-        }*/
+        selector.onMouseClick(mouseX, mouseY, mouseButton);
     }
 
     @Override
