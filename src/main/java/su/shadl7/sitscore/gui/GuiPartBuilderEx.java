@@ -127,30 +127,6 @@ public class GuiPartBuilderEx extends GuiTinkerStation implements ITooltipPainte
         drawIconEmpty(container.getSlot(1), Icons.ICON_Ingot);
         drawIconEmpty(container.getSlot(2), Icons.ICON_Block);
 
-        // draw material info
-        String amount = null;
-        Material material = getMaterial(container.getSlot(1).getStack(), container.getSlot(2).getStack());
-        if(material != null) {
-            int count = 0;
-            Optional<RecipeMatch.Match> matchOptional = material.matchesRecursively(ListUtil.getListFrom(container.getSlot(1).getStack(), container.getSlot(2).getStack()));
-            if(matchOptional.isPresent()) {
-                int matchAmount = matchOptional.get().amount;
-                amount = Util.df.format(matchAmount / (float) Material.VALUE_Ingot);
-
-                Item part = Pattern.getPartFromTag(container.getSlot(2).getStack());
-                if(part instanceof IToolPart && matchAmount < ((IToolPart) part).getCost()) {
-                    amount = TextFormatting.DARK_RED + amount + TextFormatting.RESET;
-                }
-            }
-        }
-        if(amount != null) {
-            int x = this.cornerX + this.realWidth / 2;
-            int y = this.cornerY + 63;
-            String text = Util.translateFormatted("gui.partbuilder.material_value", amount, material.getLocalizedName());
-            x -= fontRenderer.getStringWidth(text) / 2;
-            fontRenderer.renderString(text, x, y, 0x777777, false);
-        }
-
         selector.drawScreen(mouseX, mouseY, partialTicks);
 
         super.drawGuiContainerBackgroundLayer(partialTicks, mouseX, mouseY);
