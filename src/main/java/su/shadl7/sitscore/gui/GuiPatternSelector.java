@@ -1,18 +1,12 @@
 package su.shadl7.sitscore.gui;
 
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.gui.GuiScreen;
 import net.minecraft.client.renderer.Tessellator;
 import net.minecraftforge.fml.client.GuiScrollingList;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
-import org.lwjgl.input.Mouse;
 import slimeknights.tconstruct.library.TinkerRegistry;
-import su.shadl7.sitscore.PacketHandler;
-import su.shadl7.sitscore.SitSCoreMod;
-import su.shadl7.sitscore.network.PacketButtonSync;
 
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
