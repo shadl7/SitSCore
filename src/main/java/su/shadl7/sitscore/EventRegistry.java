@@ -8,7 +8,9 @@ import net.minecraft.item.ItemBlock;
 import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.client.event.ModelRegistryEvent;
 import net.minecraftforge.client.model.ModelLoader;
+import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.event.RegistryEvent;
+import net.minecraftforge.fml.common.Loader;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import net.minecraftforge.fml.common.registry.GameRegistry;
@@ -21,31 +23,41 @@ import su.shadl7.sitscore.tileentity.TilePartBuilderEx;
 
 @Mod.EventBusSubscriber(modid = Tags.MOD_ID)
 public class EventRegistry {
-    public static final Block magic_crystal = new MagicCrystal();
-    public static final Block magic_crystal_ub = new MagicCrystalUnbreakable();
-    public static final Item magic_crystal_item = new ItemBlock(magic_crystal).setRegistryName(magic_crystal.getRegistryName());
-    public static final Item magic_crystal_item_ub = new ItemBlock(magic_crystal_ub).setRegistryName(magic_crystal_ub.getRegistryName());
+    public static Block magic_crystal, magic_crystal_ub;
+    public static Item magic_crystal_item, magic_crystal_item_ub;
     @SubscribeEvent
     public static void registrationBlock(RegistryEvent.Register<Block> event) {
-        GameRegistry.registerTileEntity(TileMagicCube.class, new ResourceLocation("magic_crystal"));
-        GameRegistry.registerTileEntity(TilePartBuilderEx.class, new ResourceLocation("tilepartbuilderex"));
-        event.getRegistry().register(magic_crystal);
-        event.getRegistry().register(magic_crystal_ub);
+        if (Loader.isModLoaded("toughasnails")) {
+            magic_crystal = new MagicCrystal();
+            magic_crystal_ub = new MagicCrystalUnbreakable();
+            GameRegistry.registerTileEntity(TileMagicCube.class, new ResourceLocation("magic_crystal"));
+            event.getRegistry().register(magic_crystal);
+            event.getRegistry().register(magic_crystal_ub);
+        }
+        if (Loader.isModLoaded("tconstruct")) {
+            GameRegistry.registerTileEntity(TilePartBuilderEx.class, new ResourceLocation("tilepartbuilderex"));
+        }
     }
 
     @SubscribeEvent
     public static void registrationItem(RegistryEvent.Register<Item> event) {
-        event.getRegistry().register(magic_crystal_item);
-        event.getRegistry().register(magic_crystal_item_ub);
+        if (Loader.isModLoaded("toughasnails")) {
+            magic_crystal_item = new ItemBlock(magic_crystal).setRegistryName(magic_crystal.getRegistryName());
+            magic_crystal_item_ub = new ItemBlock(magic_crystal_ub).setRegistryName(magic_crystal_ub.getRegistryName());
+            event.getRegistry().register(magic_crystal_item);
+            event.getRegistry().register(magic_crystal_item_ub);
+        }
     }
     @SubscribeEvent
     @SideOnly(Side.CLIENT)
     public static void onRegistryModel(ModelRegistryEvent event) {
-        ModelResourceLocation mrl = new ModelResourceLocation(magic_crystal_item.getRegistryName(), "inventory");
-        ModelBakery.registerItemVariants(magic_crystal_item, mrl);
-        ModelLoader.setCustomModelResourceLocation(magic_crystal_item, 0, mrl);
-        ModelResourceLocation mrl2 = new ModelResourceLocation(magic_crystal_item_ub.getRegistryName(), "inventory");
-        ModelBakery.registerItemVariants(magic_crystal_item_ub, mrl2);
-        ModelLoader.setCustomModelResourceLocation(magic_crystal_item_ub, 0, mrl2);
+        if (Loader.isModLoaded("toughasnails")) {
+            ModelResourceLocation mrl = new ModelResourceLocation(magic_crystal_item.getRegistryName(), "inventory");
+            ModelBakery.registerItemVariants(magic_crystal_item, mrl);
+            ModelLoader.setCustomModelResourceLocation(magic_crystal_item, 0, mrl);
+            ModelResourceLocation mrl2 = new ModelResourceLocation(magic_crystal_item_ub.getRegistryName(), "inventory");
+            ModelBakery.registerItemVariants(magic_crystal_item_ub, mrl2);
+            ModelLoader.setCustomModelResourceLocation(magic_crystal_item_ub, 0, mrl2);
+        }
     }
 }

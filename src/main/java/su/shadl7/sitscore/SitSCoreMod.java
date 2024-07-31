@@ -2,6 +2,7 @@ package su.shadl7.sitscore;
 
 import net.minecraft.item.crafting.IRecipe;
 import net.minecraft.util.ResourceLocation;
+import net.minecraftforge.fml.common.Loader;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.common.event.FMLInitializationEvent;
 import net.minecraftforge.fml.common.event.FMLPostInitializationEvent;
@@ -24,14 +25,17 @@ public class SitSCoreMod {
 
     @Mod.EventHandler
     public void init(FMLInitializationEvent event) {
-        GameRegistry.registerWorldGenerator(new WorldGenStartStruct(), 10);
+        if (Loader.isModLoaded("atum") && Loader.isModLoaded("toughasnails"))
+            GameRegistry.registerWorldGenerator(new WorldGenStartStruct(), 10);
     }
 
     @Mod.EventHandler
     public void postInit(FMLPostInitializationEvent event) {
-        var recipesRegistry = (ForgeRegistry<IRecipe>) ForgeRegistries.RECIPES;
-        recipesRegistry.remove(new ResourceLocation("tconstruct", "tools/table/stencil_table"));
-        recipesRegistry.remove(new ResourceLocation("tconstruct", "tools/table/chest/pattern_simple"));
-        recipesRegistry.remove(new ResourceLocation("tconstruct", "tools/table/chest/pattern"));
+        if (Loader.isModLoaded("tconstruct")) {
+            var recipesRegistry = (ForgeRegistry<IRecipe>) ForgeRegistries.RECIPES;
+            recipesRegistry.remove(new ResourceLocation("tconstruct", "tools/table/stencil_table"));
+            recipesRegistry.remove(new ResourceLocation("tconstruct", "tools/table/chest/pattern_simple"));
+            recipesRegistry.remove(new ResourceLocation("tconstruct", "tools/table/chest/pattern"));
+        }
     }
 }
