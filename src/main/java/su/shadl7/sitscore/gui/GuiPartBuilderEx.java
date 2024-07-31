@@ -1,14 +1,11 @@
 package su.shadl7.sitscore.gui;
 
-import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Lists;
 
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiButton;
 import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.entity.player.InventoryPlayer;
-import net.minecraft.inventory.Slot;
-import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.BlockPos;
@@ -20,25 +17,17 @@ import net.minecraftforge.fml.relauncher.SideOnly;
 
 import java.io.IOException;
 import java.util.List;
-import java.util.Optional;
 
 import org.lwjgl.input.Mouse;
-import slimeknights.mantle.util.RecipeMatch;
 import slimeknights.tconstruct.library.TinkerRegistry;
-import slimeknights.tconstruct.library.Util;
 import slimeknights.tconstruct.library.client.Icons;
 import slimeknights.tconstruct.library.materials.IMaterialStats;
 import slimeknights.tconstruct.library.materials.Material;
 import slimeknights.tconstruct.library.tinkering.IMaterialItem;
-import slimeknights.tconstruct.library.tools.IToolPart;
-import slimeknights.tconstruct.library.tools.Pattern;
 import slimeknights.tconstruct.library.tools.ToolPart;
 import slimeknights.tconstruct.library.traits.ITrait;
-import slimeknights.tconstruct.library.utils.ListUtil;
 import slimeknights.tconstruct.tools.common.client.GuiTinkerStation;
 import slimeknights.tconstruct.tools.common.client.module.GuiInfoPanel;
-import slimeknights.tconstruct.tools.common.client.module.GuiSideInventory;
-import slimeknights.tconstruct.tools.common.inventory.ContainerPatternChest;
 import slimeknights.tconstruct.tools.common.inventory.ContainerTinkerStation;
 import su.shadl7.sitscore.Tags;
 import su.shadl7.sitscore.container.ContainerPartBuilderEx;
@@ -50,15 +39,9 @@ public class GuiPartBuilderEx extends GuiTinkerStation implements ITooltipPainte
     private static final ResourceLocation BACKGROUND = new ResourceLocation(Tags.MOD_ID,
             "textures/gui/part_table.png");
 
-    public static final int Column_Count = 4;
-
     public static final int SELECTOR_ROWS = 3,
                             SELECTOR_COLS = 5;
-
-    protected GuiButtonsPartCrafterEx buttons;
     protected GuiInfoPanel info;
-    protected GuiSideInventory sideInventory;
-    protected ContainerPatternChest.DynamicChestInventory chestContainer;
 
     protected GuiPatternSelector selector;
 
@@ -67,21 +50,6 @@ public class GuiPartBuilderEx extends GuiTinkerStation implements ITooltipPainte
 
         if(inventorySlots instanceof ContainerPartBuilderEx) {
             ContainerPartBuilderEx container = (ContainerPartBuilderEx) inventorySlots;
-
-            // has part crafter buttons?
-            if(container.isPartCrafter()) {
-                buttons = new GuiButtonsPartCrafterEx(this, container, container.patternChest);
-                this.addModule(buttons);
-            }
-            else {
-                // has pattern chest inventory?
-                chestContainer = container.getSubContainer(ContainerPatternChest.DynamicChestInventory.class);
-                if(chestContainer != null) {
-                    sideInventory = new GuiSideInventory(this, chestContainer, chestContainer.getSlotCount(), chestContainer.columns);
-                    this.addModule(sideInventory);
-                }
-            }
-
             info = new GuiInfoPanel(this, container);
             info.ySize = this.ySize;
             this.addModule(info);
@@ -96,33 +64,8 @@ public class GuiPartBuilderEx extends GuiTinkerStation implements ITooltipPainte
     }
 
     @Override
-    public void drawSlot(Slot slotIn) {
-        if(inventorySlots instanceof ContainerPartBuilderEx container) {
-            if(container.isPartCrafter() && slotIn.inventory == container.patternChest) {
-                return;
-            }
-        }
-
-        super.drawSlot(slotIn);
-    }
-
-    @Override
-    public boolean isMouseOverSlot(Slot slotIn, int mouseX, int mouseY) {
-        if(inventorySlots instanceof ContainerPartBuilderEx container) {
-            if(container.isPartCrafter() && slotIn.inventory == container.patternChest) {
-                return false;
-            }
-        }
-        return super.isMouseOverSlot(slotIn, mouseX, mouseY);
-    }
-
-    @Override
     protected void drawGuiContainerBackgroundLayer(float partialTicks, int mouseX, int mouseY) {
         drawBackground(BACKGROUND);
-
-        if(sideInventory != null) {
-            sideInventory.updateSlotCount(chestContainer.getSizeInventory());
-        }
 
         drawIconEmpty(container.getSlot(1), Icons.ICON_Ingot);
         drawIconEmpty(container.getSlot(2), Icons.ICON_Block);
@@ -180,13 +123,6 @@ public class GuiPartBuilderEx extends GuiTinkerStation implements ITooltipPainte
         info.setText(message);
     }
 
-    public void updateButtons() {
-        if(buttons != null) {
-            // this needs to be done threadsafe, since the buttons may be getting rendered currently
-            Minecraft.getMinecraft().addScheduledTask(() -> buttons.updatePosition(cornerX, cornerY, realWidth, realHeight));
-        }
-    }
-
     protected void setDisplayForMaterial(Material material) {
         info.setCaption(material.getLocalizedNameColored());
 
@@ -240,11 +176,6 @@ public class GuiPartBuilderEx extends GuiTinkerStation implements ITooltipPainte
         }
 
         // no material found
-        return null;
-    }
-
-    private Material getMaterialItem(ItemStack stack) {
-
         return null;
     }
 

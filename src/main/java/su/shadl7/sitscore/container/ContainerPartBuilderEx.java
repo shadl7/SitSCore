@@ -46,7 +46,6 @@ public class ContainerPartBuilderEx extends ContainerTinkerStation<TilePartBuild
 
     private final boolean partCrafter;
     private final EntityPlayer player;
-    public final IInventory patternChest;
 
     public ContainerPartBuilderEx(InventoryPlayer playerInventory, TilePartBuilderEx tile) {
         super(tile);
@@ -54,8 +53,6 @@ public class ContainerPartBuilderEx extends ContainerTinkerStation<TilePartBuild
         InventoryCraftingPersistent craftMatrix = new InventoryCraftingPersistent(this, tile, 1, 3);
         this.craftResult = new InventoryCraftResult();
         this.player = playerInventory.player;
-        //InventoryCrafting craftMatrixSecondary = new InventoryCrafting(this, 1, 1);
-        //this.craftResultSecondary = new InventoryCrafting(this, 1, 1);
 
         // output slots
         this.addSlotToContainer(new SlotCraftingCustom(this, playerInventory.player, craftMatrix, craftResult, 0, 153, 35));
@@ -64,40 +61,23 @@ public class ContainerPartBuilderEx extends ContainerTinkerStation<TilePartBuild
         this.addSlotToContainer(input1 = new Slot(craftMatrix, 0, 8, 24));
         this.addSlotToContainer(input2 = new Slot(craftMatrix, 1, 8, 46));
 
-        TilePatternChest chest = detectTE(TilePatternChest.class);
-        // TE present?
-        if(chest != null) {
-            // crafting station and stencil table also present?
-            boolean hasCraftingStation = false;
-            boolean hasStencilTable = false;
-            for(Pair<BlockPos, IBlockState> pair : tinkerStationBlocks) {
-                if(!pair.getRight().getProperties().containsKey(BlockToolTable.TABLES)) {
-                    continue;
-                }
-
-                BlockToolTable.TableTypes type = pair.getRight().getValue(BlockToolTable.TABLES);
-                if(type != null) {
-                    if(type == BlockToolTable.TableTypes.CraftingStation) {
-                        hasCraftingStation = true;
-                    }
-                    else if(type == BlockToolTable.TableTypes.StencilTable) {
-                        hasStencilTable = true;
-                    }
-                }
+        // crafting station also present?
+        boolean hasCraftingStation = false;
+        for(Pair<BlockPos, IBlockState> pair : tinkerStationBlocks) {
+            if(!pair.getRight().getProperties().containsKey(BlockToolTable.TABLES)) {
+                continue;
             }
 
-            // are we a PartCrafter?
-            partCrafter = hasStencilTable && hasCraftingStation;
-
-            Container sideInventory = new ContainerPatternChest.DynamicChestInventory(chest, chest, -6, 8, 6);
-            addSubContainer(sideInventory, true);
-
-            patternChest = chest;
+            BlockToolTable.TableTypes type = pair.getRight().getValue(BlockToolTable.TABLES);
+            if(type != null) {
+                if(type == BlockToolTable.TableTypes.CraftingStation) {
+                    hasCraftingStation = true;
+                }
+            }
         }
-        else {
-            partCrafter = false;
-            patternChest = null;
-        }
+
+        // are we a PartCrafter?
+        partCrafter = hasCraftingStation;
 
         this.addPlayerInventory(playerInventory, 8, 84);
 
@@ -181,29 +161,6 @@ public class ContainerPartBuilderEx extends ContainerTinkerStation<TilePartBuild
             return Util.translate("gui.partcrafter.name");
 
         return super.getInventoryDisplayName();
-    }
-
-    @Override
-    @SideOnly(Side.CLIENT)
-    public void putStackInSlot(int p_75141_1_, @Nonnull ItemStack p_75141_2_) {
-        super.putStackInSlot(p_75141_1_, p_75141_2_);
-
-        // this is called solely to update the gui buttons
-        Minecraft mc = Minecraft.getMinecraft();
-        if (mc.currentScreen instanceof GuiPartBuilderEx gui)
-            gui.updateButtons();
-    }
-
-    @Override
-    @SideOnly(Side.CLIENT)
-    public ItemStack slotClick(int slotId, int dragType, ClickType type, EntityPlayer player) {
-        ItemStack ret = super.slotClick(slotId, dragType, type, player);
-        // this is called solely to update the gui buttons
-        Minecraft mc = Minecraft.getMinecraft();
-        if (mc.currentScreen instanceof GuiPartBuilderEx gui)
-            gui.updateButtons();
-
-        return ret;
     }
 
     // Server side -> client side pattern select sync
