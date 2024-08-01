@@ -70,5 +70,5 @@ dependencies {
     implementation rfg.deobf("curse.maven:tinkers-construct-74072:2902483")
     runtimeOnly "mezz.jei:jei_1.12.2:4.16.1.1012"
     compileOnly rfg.deobf("curse.maven:constructs-armory-dev-287683:3174536")
-    runtimeOnly "curse.maven:constructs-armory-287683:3174535"
+    //runtimeOnly "curse.maven:constructs-armory-287683:3174535"
 }

@@ -15,6 +15,7 @@ import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
 import slimeknights.mantle.common.IInventoryGui;
+import slimeknights.tconstruct.library.TinkerRegistry;
 import slimeknights.tconstruct.shared.block.BlockTable;
 import slimeknights.tconstruct.shared.block.PropertyTableItem;
 import slimeknights.tconstruct.shared.inventory.ConfigurableInvWrapperCapability;
@@ -95,6 +96,7 @@ public class TilePartBuilderEx extends TileTable implements IInventoryGui {
     public void readFromNBT(NBTTagCompound tags) {
         super.readFromNBT(tags);
         if (tags.hasKey("patternSelected"))
-            this.setSelectedPattern(tags.getInteger("patternSelected"));
+            if (tags.getInteger("patternSelected") < TinkerRegistry.getStencilTableCrafting().size())
+                this.setSelectedPattern(tags.getInteger("patternSelected"));
     }
 }
