@@ -28,7 +28,7 @@ public class GuiPatternSelector extends GuiScrollingList {
                 (patterns.size() % SELECTOR_COLS == 0 ? 1 : 0) + 1;
         for (int i = 0; i < rowsAll; i++) {
             buttons.add(new ArrayList<>());
-            for (int j = 0; j < patterns.size() % SELECTOR_COLS + 2 // Maximum on row - SELECTOR_COLS
+            for (int j = 0; j < SELECTOR_COLS // Maximum on row - SELECTOR_COLS
                     && patterns.size() > SELECTOR_COLS * i + j; j++) { // Check if last row has fewer patterns
                 buttons.get(i).add(new GuiButtonPattern(SELECTOR_COLS * i + j));
             }
