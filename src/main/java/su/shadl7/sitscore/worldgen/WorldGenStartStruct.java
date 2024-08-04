@@ -12,6 +12,7 @@ public class WorldGenStartStruct implements IWorldGenerator {
     private static final ResourceLocation START = new ResourceLocation("sitscore:start_struct");
     @Override
     public void generate (Random random, int chunkX, int chunkZ, World world, IChunkGenerator chunkGenerator, IChunkProvider chunkProvider) {
+        // This function is named "get" but it also registers the structure
         world.getSaveHandler().getStructureTemplateManager().getTemplate(world.getMinecraftServer(), START);
     }
 }

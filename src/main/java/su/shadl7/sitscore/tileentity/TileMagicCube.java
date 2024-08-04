@@ -29,7 +29,7 @@ public class TileMagicCube extends TileEntity implements ITickable {
             if (this.maxSpreadBox == null) {
                 generateSpreadBox();
             }
-
+            // Set the temperature and thirst of all players in the spread box to 10 and 20
             for (EntityPlayer player : world.getEntitiesWithinAABB(EntityPlayer.class, this.maxSpreadBox)) {
                 ITemperature temperature = player.getCapability(TANCapabilities.TEMPERATURE, null);
                 IThirst thirst = player.getCapability(TANCapabilities.THIRST, null);

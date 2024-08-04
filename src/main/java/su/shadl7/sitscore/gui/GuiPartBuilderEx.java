@@ -67,6 +67,7 @@ public class GuiPartBuilderEx extends GuiTinkerStation implements ITooltipPainte
     protected void drawGuiContainerBackgroundLayer(float partialTicks, int mouseX, int mouseY) {
         drawBackground(BACKGROUND);
 
+        // Draw inputs slot icons
         drawIconEmpty(container.getSlot(1), Icons.ICON_Ingot);
         drawIconEmpty(container.getSlot(2), Icons.ICON_Block);
 
@@ -200,6 +201,7 @@ public class GuiPartBuilderEx extends GuiTinkerStation implements ITooltipPainte
     @Override
     public void handleMouseInput() throws IOException {
         super.handleMouseInput();
+        // Transform LWJGL mouse coordinates to Minecraft format (I don't know how it works but i found it in Minecraft code)
         selector.handleMouseInput(Mouse.getEventX() * this.width / this.mc.displayWidth,
                 this.height - Mouse.getEventY() * this.height / this.mc.displayHeight - 1);
     }
@@ -208,7 +210,7 @@ public class GuiPartBuilderEx extends GuiTinkerStation implements ITooltipPainte
     public void drawTooltip(int x, int y, int x2, int y2, int mouseX, int mouseY, ItemStack pattern) {
         this.renderToolTip(pattern, mouseX, mouseY);
         GlStateManager.colorMask(true, true, true, false);
-        this.drawGradientRect(x, y, x2, y2, -2130706433, -2130706433);
+        this.drawGradientRect(x, y, x2, y2, -2130706433, -2130706433); // Draw gray selecting rectangle on mouse hover
         GlStateManager.colorMask(true, true, true, true);
     }
 }

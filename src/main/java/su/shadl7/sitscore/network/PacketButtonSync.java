@@ -32,6 +32,7 @@ public class PacketButtonSync implements IMessage {
     }
 
     public static class HandlerServer implements IMessageHandler<PacketButtonSync, IMessage> {
+        // Fired when player click on pattern in Part Builder
         @Override
         public IMessage onMessage(PacketButtonSync message, MessageContext ctx) {
             EntityPlayerMP player = ctx.getServerHandler().player;
@@ -40,8 +41,8 @@ public class PacketButtonSync implements IMessage {
             player.getServerWorld().addScheduledTask(() -> {
                 if (patternIndex > 0 && patternIndex < TinkerRegistry.getStencilTableCrafting().size()) { // Validate patternIndex
                     if (player.openContainer instanceof ContainerPartBuilderEx container) {
-                        container.getTile().setSelectedPattern(patternIndex); // Server side setup
-                        container.syncPattern(patternIndex, player.world, container.getTile().getPos()); // Client side sync
+                        container.getTile().setSelectedPattern(patternIndex); // Server side pattern refresh
+                        container.syncPattern(patternIndex, player.world, container.getTile().getPos()); // Sync selected pattern to all clients that opened this container
                         container.updateResult(); // Server side container output items recalculate
                     }
                 }
@@ -51,6 +52,7 @@ public class PacketButtonSync implements IMessage {
     }
 
     public static class HandlerClient implements IMessageHandler<PacketButtonSync, IMessage> {
+        // Fired when server sends pattern sync to client
         @Override
         public IMessage onMessage(PacketButtonSync message, MessageContext ctx) {
             Minecraft.getMinecraft().addScheduledTask(() -> {
