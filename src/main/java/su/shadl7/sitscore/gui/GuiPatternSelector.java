@@ -6,6 +6,7 @@ import net.minecraftforge.fml.client.GuiScrollingList;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 import slimeknights.tconstruct.library.TinkerRegistry;
+import su.shadl7.sitscore.mixin.GuiScrollingListAccesor;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -70,7 +71,7 @@ public class GuiPatternSelector extends GuiScrollingList {
 
     private List<Integer> findButton(int mouseX, int mouseY) {
         for (int i = 0; i < buttons.size(); i++) {
-            int renderTop = this.top - (int)((IScrollerHack) this).sitSCore$getScrollDistance();
+            int renderTop = this.top - (int)((GuiScrollingListAccesor) this).getScrollDistance();
             int slotTop = renderTop + i * this.slotHeight;
             int slotBottom = slotTop + this.slotHeight;
             if (slotBottom >= this.top && slotTop <= this.bottom) { // Check if button is outside selector
