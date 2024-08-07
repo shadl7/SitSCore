@@ -11,6 +11,6 @@
 	"server": [],
 	"client": [
 		"MixinGuiScrollingList",
-		"GuiScrollingListAccesor"
+		"GuiScrollingListAccessor"
 	]
 }
