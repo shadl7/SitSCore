@@ -1,2 +1,15 @@
 tile.magic_crystal.name=Magic Crystal
 tile.magic_crystal_unbreakable.name=Magic Crystal (Unbreakable)
+
+portalcore.nostructure=Structure incomplete!
+portalcore.active=Portal Active!
+
+item.sitscore.emptyactivator.name=Portal Activator (Empty)
+item.sitscore.netheractivator.name=Portal Activator (Nether)
+item.sitscore.endactivator.name=Portal Activator (The End)
+item.sitscore.abyssalactivator.name=Portal Activator (Abyssal)
+item.sitscore.betweenlandsactivator.name=Portal Activator (The Betweenlands)
+
+tile.banishedcore.portal.name=Yes! I am THE Portal!
+tile.banishedcore.portalblock.name=Portal Handler
+tile.banishedcore.portalcore.name=Portal Core

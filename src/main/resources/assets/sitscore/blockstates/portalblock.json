@@ -1,0 +1,48 @@
+{
+  "forge_marker": 1,
+  "defaults": {
+    "model": "sitscore:portalblock",
+    "textures": {
+      "all": "sitscore:blocks/portalblock"
+    }
+  },
+  "variants": {
+    "normal": [{}],
+    "inventory": [{
+      "transform": "forge:default-block"
+    }],
+    "style": {
+      "self": {},
+      "nether": {
+        "textures": {
+          "all": "blocks/netherrack"
+        }
+      },
+      "theend": {
+        "textures": {
+          "all": "blocks/end_stone"
+        }
+      },
+      "abyssal": {
+        "textures": {
+          "all": "abyssalcraft:blocks/abydrsbc"
+        }
+      },
+      "betweenlands": {
+        "textures": {
+          "all": "thebetweenlands:blocks/betweenstone"
+        }
+      },
+      "atum": {
+        "textures": {
+          "all": "atum:blocks/alabaster"
+        }
+      },
+      "overworld": {
+        "textures": {
+          "all": "blocks/obsidian"
+        }
+      }
+    }
+  }
+}
