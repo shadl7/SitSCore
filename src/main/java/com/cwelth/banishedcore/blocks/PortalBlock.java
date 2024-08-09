@@ -127,7 +127,6 @@ public class PortalBlock extends Block {
         THEEND,
         ABYSSAL,
         BETWEENLANDS,
-        OVERWORLD,
         ATUM;
 
         private PortalBlockStyle() {
@@ -148,8 +147,6 @@ public class PortalBlock extends Block {
                 return "abyssal";
             } else if (this == BETWEENLANDS) {
                 return "betweenlands";
-            } else if (this == OVERWORLD) {
-                return "overworld";
             } else {
                 return this == ATUM ? "atum" : "";
             }
