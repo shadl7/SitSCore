@@ -1,16 +1,17 @@
 {
-	"package": "su.shadl7.sitscore.mixin",
-	"required": false,
-	"refmap": "${mixin_refmap}",
-	"target": "@env(DEFAULT)",
-	"minVersion": "0.8.5",
-	"compatibilityLevel": "JAVA_8",
-	"mixins": [
-		"MixinBlockToolTable"
-	],
-	"server": [],
-	"client": [
-		"MixinGuiScrollingList",
-		"GuiScrollingListAccessor"
-	]
+  "package": "su.shadl7.sitscore.mixin",
+  "required": false,
+  "refmap": "${mixin_refmap}",
+  "target": "@env(DEFAULT)",
+  "minVersion": "0.8.5",
+  "compatibilityLevel": "JAVA_8",
+  "mixins": [
+    "MixinAtumRecipes",
+    "MixinBlockToolTable"
+  ],
+  "server": [],
+  "client": [
+    "GuiScrollingListAccessor",
+    "MixinGuiScrollingList"
+  ]
 }
